@@ -94,16 +94,7 @@ export function EmailReports({ open, onClose }: { open: boolean; onClose: () => 
 
   return (
     <Sheet open={open} onClose={onClose} title="Otomatik Rapor E-postası">
-      <div className="rounded-xl border border-border p-3 text-sm">
-        <p className="font-semibold">Otomatik gönderim (İstanbul saati)</p>
-        <ul className="mt-2 space-y-1 text-muted-foreground">
-          <li><b className="text-foreground">Günlük:</b> her akşam 21:00 · seçtiğiniz hocalara</li>
-          <li><b className="text-foreground">Haftalık:</b> her pazar sabah 09:00 · herkese</li>
-          <li><b className="text-foreground">Aylık:</b> ayın son günü sabah 09:00 · herkese</li>
-        </ul>
-      </div>
-
-      <div className="mt-4 flex gap-2">
+      <div className="flex gap-2">
         <Input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && add()} placeholder="hoca@ornek.com" type="email" />
         <Button variant="outline" onClick={add}>Ekle</Button>
       </div>
