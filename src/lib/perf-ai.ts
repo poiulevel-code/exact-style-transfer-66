@@ -5,7 +5,7 @@ export const PERF_DEVICES = ["Android telefon", "iPhone", "Tablet", "Bilgisayar"
 
 export const MAX_SYMPTOM_LEN = 2000;
 
-export type PerfMetrics = { loadMs?: number; domReadyMs?: number; resources?: number; transferKb?: number; connection?: string; memoryGb?: number; cores?: number };
+export type PerfMetrics = { loadMs?: number | undefined; domReadyMs?: number | undefined; resources?: number | undefined; transferKb?: number | undefined; connection?: string | undefined; memoryGb?: number | undefined; cores?: number | undefined };
 export type PerfInput = { page: string; device: string; symptoms: string; metrics?: PerfMetrics };
 
 export const PERF_INSTRUCTIONS = `Sen bir web performans uzmanısın. Bir Kur'an kursu yoklama uygulamasının yöneticisi yavaşlık bildiriyor.
