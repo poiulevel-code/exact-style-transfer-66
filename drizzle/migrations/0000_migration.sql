@@ -3,9 +3,9 @@ CREATE TABLE public.report_subscriptions (
   recipients text[] NOT NULL DEFAULT '{}',
   students jsonb NOT NULL DEFAULT '[]'::jsonb,
   attendance jsonb NOT NULL DEFAULT '[]'::jsonb,
-  updated_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  daily_recipients text[]
 );
 GRANT ALL ON public.report_subscriptions TO service_role;
 ALTER TABLE public.report_subscriptions ENABLE ROW LEVEL SECURITY;
 COMMENT ON TABLE public.report_subscriptions IS 'Teacher emails and a copy of attendance used for automatic report emails.';
-ALTER TABLE public.report_subscriptions ADD COLUMN daily_recipients text[];
