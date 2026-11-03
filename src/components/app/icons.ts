@@ -32,6 +32,7 @@ export { default as RotateCcw } from "lucide-react/dist/esm/icons/rotate-ccw.js"
 export { default as Save } from "lucide-react/dist/esm/icons/save.js";
 export { default as Search } from "lucide-react/dist/esm/icons/search.js";
 export { default as Sparkles } from "lucide-react/dist/esm/icons/sparkles.js";
+export { default as Gauge } from "lucide-react/dist/esm/icons/gauge.js";
 export { default as Sun } from "lucide-react/dist/esm/icons/sun.js";
 export { default as Sunrise } from "lucide-react/dist/esm/icons/sunrise.js";
 export { default as Sunset } from "lucide-react/dist/esm/icons/sunset.js";

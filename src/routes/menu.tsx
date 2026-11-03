@@ -1,18 +1,21 @@
 import { localIso } from "@/lib/utils";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useRef, useState } from "react";
-import { Download, Upload, FileDown, UserPlus, Sparkles, Mail } from "@/components/app/icons";
-import { EmailReports } from "@/components/app/EmailReports";
-import { ReportSheet } from "@/components/app/ReportSheet";
-import { BlankAttendanceSheet } from "@/components/app/BlankAttendanceSheet";
+import { lazy, Suspense, useRef, useState } from "react";
+import { Download, Upload, FileDown, UserPlus, Sparkles, Mail, Gauge } from "@/components/app/icons";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/app/Sheet";
 import { StudentForm, emptyStudent } from "@/components/app/StudentForm";
-import { PhotoNamesImport } from "@/components/app/PhotoNamesImport";
 import { useStore, type State } from "@/lib/store";
 import { exportFiles, importFiles } from "@/lib/attachments";
 import { trialPrefix, withTrialStudents } from "@/lib/trial-students";
 import { groupLabel } from "@/lib/groups";
+
+// Heavy sheets load only when opened, so the Menu page opens instantly.
+const EmailReports = lazy(() => import("@/components/app/EmailReports").then((m) => ({ default: m.EmailReports })));
+const ReportSheet = lazy(() => import("@/components/app/ReportSheet").then((m) => ({ default: m.ReportSheet })));
+const BlankAttendanceSheet = lazy(() => import("@/components/app/BlankAttendanceSheet").then((m) => ({ default: m.BlankAttendanceSheet })));
+const PhotoNamesImport = lazy(() => import("@/components/app/PhotoNamesImport").then((m) => ({ default: m.PhotoNamesImport })));
+const PerfDiagnosis = lazy(() => import("@/components/app/PerfDiagnosis").then((m) => ({ default: m.PerfDiagnosis })));
 
 export const Route = createFileRoute("/menu")({
   head: () => ({
@@ -36,6 +39,7 @@ function Menu() {
   const [blankOpen, setBlankOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [mailOpen, setMailOpen] = useState(false);
+  const [perfOpen, setPerfOpen] = useState(false);
 
   // Backups always hold both groups.
   const exportData = async () => {
@@ -73,7 +77,7 @@ function Menu() {
       <div className="mt-5 space-y-3">
         <button onClick={() => setAddOpen(true)} className={`${btn} border-primary bg-primary text-primary-foreground`}><UserPlus className="h-5 w-5" /> Talebe Ekle</button>
         <Sheet open={addOpen} onClose={() => setAddOpen(false)} title={`Yeni Talebe · ${groupLabel(group)}`}>
-          <PhotoNamesImport onDone={(n) => { setAddOpen(false); setMsg(`${n} talebe eklendi.`); }} />
+          {addOpen && <Suspense fallback={null}><PhotoNamesImport onDone={(n) => { setAddOpen(false); setMsg(`${n} talebe eklendi.`); }} /></Suspense>}
           <StudentForm initial={emptyStudent} onSubmit={(s) => { addStudent(s); setAddOpen(false); setMsg(`${s.name} eklendi.`); }} />
         </Sheet>
         <Button variant="outline" onClick={() => {
@@ -86,13 +90,17 @@ function Menu() {
         <Link to="/ai-tutanak" className={btn}><Sparkles className="h-5 w-5 text-primary" /> AI ile Tutanak Hazırla</Link>
         <button onClick={() => setReportOpen(true)} className={btn}><FileDown className="h-5 w-5 text-primary" /> Yoklama Raporu İndir (PDF / Excel)</button>
         <button onClick={() => setMailOpen(true)} className={btn}><Mail className="h-5 w-5 text-primary" /> Otomatik Rapor E-postası</button>
-        <EmailReports open={mailOpen} onClose={() => setMailOpen(false)} />
-        <ReportSheet open={reportOpen} onClose={() => setReportOpen(false)} />
+        <Suspense fallback={null}>
+          {mailOpen && <EmailReports open onClose={() => setMailOpen(false)} />}
+          {reportOpen && <ReportSheet open onClose={() => setReportOpen(false)} />}
+          {blankOpen && <BlankAttendanceSheet open onClose={() => setBlankOpen(false)} />}
+          {perfOpen && <PerfDiagnosis open onClose={() => setPerfOpen(false)} />}
+        </Suspense>
         <Button variant="outline" onClick={() => setBlankOpen(true)} className="h-auto w-full justify-start whitespace-normal py-4"><FileDown className="text-primary" /> Boş Yoklama Çizelgesi İndir (PDF / Excel)</Button>
-        <BlankAttendanceSheet open={blankOpen} onClose={() => setBlankOpen(false)} />
         <button onClick={exportData} className={btn}><Download className="h-5 w-5 text-primary" /> Verileri Yedekle (indir)</button>
         <button onClick={() => fileRef.current?.click()} className={btn}><Upload className="h-5 w-5 text-primary" /> Yedeği Geri Yükle</button>
         <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={(e) => importData(e.target.files?.[0])} />
+        <button onClick={() => setPerfOpen(true)} className={btn}><Gauge className="h-5 w-5 text-primary" /> Yavaşlık Teşhisi (AI)</button>
         {msg && <p className="text-center text-sm text-primary">{msg}</p>}
         <p className="text-center text-xs text-muted-foreground">Veriler bu cihazda saklanır.</p>
       </div>
